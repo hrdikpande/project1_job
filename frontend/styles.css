@@ -1,0 +1,122 @@
+/* Custom styles to complement Tailwind */
+
+.stats-card {
+    transition: transform 0.2s;
+  }
+  
+  .stats-card:hover {
+    transform: translateY(-2px);
+  }
+  
+  .task-card, .article-card, .checklist-card {
+    transition: all 0.3s ease;
+  }
+  
+  .task-card:hover, .article-card:hover, .checklist-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  
+  .input-field:focus {
+    outline: none;
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .modal {
+    z-index: 1000;
+  }
+  
+  .progress-bar {
+    transition: width 0.3s ease;
+  }
+  
+  .nav-btn.active {
+    background-color: rgba(255,255,255,0.2);
+  }
+  
+  /* Theme colors for checklists */
+  .theme-blue { border-left: 4px solid #3B82F6; }
+  .theme-green { border-left: 4px solid #10B981; }
+  .theme-purple { border-left: 4px solid #8B5CF6; }
+  .theme-red { border-left: 4px solid #EF4444; }
+  .theme-yellow { border-left: 4px solid #F59E0B; }
+  .theme-indigo { border-left: 4px solid #6366F1; }
+  
+  .priority-high { color: #EF4444; }
+  .priority-medium { color: #F59E0B; }
+  .priority-low { color: #10B981; }
+  
+  @media (max-width: 768px) {
+    .grid-cols-6 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  /* Loading animation */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Responsive improvements */
+  @media (max-width: 640px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .nav-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .stats-card {
+      padding: 1rem;
+    }
+  }
+  
+  /* Notification styles */
+  .notification {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Accessibility improvements */
+  button:focus,
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+  }
+  
+  /* Print styles */
+  @media print {
+    .nav-btn,
+    button,
+    .modal {
+      display: none !important;
+    }
+    
+    .stats-card,
+    .task-card,
+    .article-card,
+    .checklist-card {
+      break-inside: avoid;
+    }
+  }
+  

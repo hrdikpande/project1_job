@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task & Checklist Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Loading Overlay -->
+    <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p class="mt-2 text-gray-600">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Task & Checklist Manager</h1>
+            <div class="space-x-4">
+                <button onclick="showSection('dashboard')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700 active">Dashboard</button>
+                <button onclick="showSection('tasks')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Tasks</button>
+                <button onclick="showSection('articles')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Articles</button>
+                <button onclick="showSection('checklists')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Checklists</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="hidden">
+            <h2 class="text-3xl font-bold mb-6">Dashboard</h2>
+            
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="stats-card bg-white p-6 rounded-lg shadow">
+                    <div class="text-3xl font-bold text-blue-600" id="total-tasks">0</div>
+                    <div class="text-gray-600">Total Tasks</div>
+                </div>
+                <div class="stats-card bg-white p-6 rounded-lg shadow">
+                    <div class="text-3xl font-bold text-green-600" id="completed-tasks">0</div>
+                    <div class="text-gray-600">Completed Tasks</div>
+                </div>
+                <div class="stats-card bg-white p-6 rounded-lg shadow">
+                    <div class="text-3xl font-bold text-yellow-600" id="pending-tasks">0</div>
+                    <div class="text-gray-600">Pending Tasks</div>
+                </div>
+                <div class="stats-card bg-white p-6 rounded-lg shadow">
+                    <div class="text-3xl font-bold text-purple-600" id="total-articles">0</div>
+                    <div class="text-gray-600">Total Articles</div>
+                </div>
+            </div>
+
+            <!-- Checklist Dashboard -->
+            <div id="checklist-dashboard"></div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div id="tasks" class="hidden">
+            <h2 class="text-3xl font-bold mb-6">Task Management</h2>
+            
+            <!-- Add Task Form -->
+            <div class="bg-white p-6 rounded-lg shadow mb-6">
+                <h3 class="text-xl font-semibold mb-4">Add New Task</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Task Name</label>
+                        <input type="text" id="task-name" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                               placeholder="Enter task name" aria-label="Task name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Creator Name</label>
+                        <input type="text" id="creator-name" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                               placeholder="Enter creator name" aria-label="Creator name">
+                    </div>
+                </div>
+                <button onclick="addTask()" class="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                    Add Task
+                </button>
+            </div>
+
+            <!-- Tasks List -->
+            <div id="tasks-list"></div>
+        </div>
+
+        <!-- Articles Section -->
+        <div id="articles" class="hidden">
+            <h2 class="text-3xl font-bold mb-6">Article Management</h2>
+            
+            <!-- Add Article Form -->
+            <div class="bg-white p-6 rounded-lg shadow mb-6">
+                <h3 class="text-xl font-semibold mb-4">Add New Article</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Article Headline</label>
+                        <input type="text" id="article-headline" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                               placeholder="Enter article headline" aria-label="Article headline">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Article URL</label>
+                        <input type="url" id="article-link" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                               placeholder="Enter article URL" aria-label="Article URL">
+                    </div>
+                </div>
+                <button onclick="addArticle()" class="mt-4 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                    Add Article
+                </button>
+            </div>
+
+            <!-- Articles List -->
+            <div id="articles-list"></div>
+        </div>
+
+        <!-- Checklists Section -->
+        <div id="checklists" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">Checklist Management</h2>
+                <button onclick="showCreateChecklistModal()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                    Create New Checklist
+                </button>
+            </div>
+
+            <!-- Checklists Container -->
+            <div id="checklists-container"></div>
+        </div>
+    </div>
+
+    <!-- Create Checklist Modal -->
+    <div id="checklist-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+            <h3 class="text-xl font-semibold mb-4">Create New Checklist</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                    <input type="text" id="checklist-title" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                           placeholder="Enter checklist title" aria-label="Checklist title">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea id="checklist-description" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="3" placeholder="Enter description (optional)" aria-label="Checklist description"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Theme</label>
+                    <select id="checklist-theme" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Checklist theme">
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                        <option value="purple">Purple</option>
+                        <option value="red">Red</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="indigo">Indigo</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="hideCreateChecklistModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button onclick="createNewChecklist()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    Create
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="checklist.js"></script>
+</body>
+</html>
