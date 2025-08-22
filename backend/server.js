@@ -32,7 +32,7 @@ app.use('/api/', limiter);
 // CORS configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
+    ? [process.env.FRONTEND_URL, 'https://railway.app', 'https://*.railway.app']
     : ['http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true
 }));
@@ -43,8 +43,6 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files (serve frontend)
 app.use(express.static(path.join(__dirname, '../frontend')));
-
-
 
 // API Routes
 app.use('/api/tasks', tasksRouter);
@@ -59,7 +57,9 @@ app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+    port: PORT
   });
 });
 
@@ -98,31 +98,39 @@ async function startServer() {
     await database.init();
     console.log('Database initialized successfully');
     
-    const server = app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-      console.log(`Frontend: http://localhost:${PORT}`);
-      console.log(`API: http://localhost:${PORT}/api`);
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`🎯 Frontend: http://localhost:${PORT}`);
+      console.log(`🔌 API: http://localhost:${PORT}/api`);
     });
 
     // Handle server errors
     server.on('error', (error) => {
       if (error.code === 'EADDRINUSE') {
-        console.error(`Port ${PORT} is already in use`);
+        console.error(`❌ Port ${PORT} is already in use`);
       } else {
-        console.error('Server error:', error);
+        console.error('❌ Server error:', error);
       }
       process.exit(1);
     });
 
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 }
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('Shutting down gracefully...');
+  console.log('🛑 Shutting down gracefully...');
+  await database.close();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  console.log('🛑 Received SIGTERM, shutting down gracefully...');
   await database.close();
   process.exit(0);
 });
