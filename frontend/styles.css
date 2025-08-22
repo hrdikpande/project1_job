@@ -8,11 +8,11 @@
     transform: translateY(-2px);
   }
   
-  .task-card, .article-card, .checklist-card {
+  .task-card, .article-card, .checklist-card, .project-card {
     transition: all 0.3s ease;
   }
   
-  .task-card:hover, .article-card:hover, .checklist-card:hover {
+  .task-card:hover, .article-card:hover, .checklist-card:hover, .project-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0,0,0,0.1);
   }
@@ -46,6 +46,25 @@
   .priority-high { color: #EF4444; }
   .priority-medium { color: #F59E0B; }
   .priority-low { color: #10B981; }
+  
+  /* Digital clock styles */
+  .clock-display {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+  }
+  
+  /* Project status colors */
+  .status-planning { background-color: #DBEAFE; color: #1E40AF; }
+  .status-active { background-color: #D1FAE5; color: #065F46; }
+  .status-on-hold { background-color: #FEF3C7; color: #92400E; }
+  .status-completed { background-color: #E9D5FF; color: #7C3AED; }
+  .status-cancelled { background-color: #FEE2E2; color: #DC2626; }
+  
+  /* Priority colors */
+  .priority-low { background-color: #D1FAE5; color: #065F46; }
+  .priority-medium { background-color: #FEF3C7; color: #92400E; }
+  .priority-high { background-color: #FED7AA; color: #C2410C; }
+  .priority-urgent { background-color: #FEE2E2; color: #DC2626; }
   
   @media (max-width: 768px) {
     .grid-cols-6 {
@@ -115,7 +134,8 @@
     .stats-card,
     .task-card,
     .article-card,
-    .checklist-card {
+    .checklist-card,
+    .project-card {
       break-inside: avoid;
     }
   }

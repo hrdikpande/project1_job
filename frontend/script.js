@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 // Navigation function
 function showSection(sectionName) {
-  const sections = ['dashboard', 'tasks', 'articles', 'checklists'];
+  const sections = ['dashboard', 'projects', 'daily-tasks', 'tasks', 'articles', 'checklists'];
   sections.forEach(section => {
     const element = document.getElementById(section);
     if (section === sectionName) {
@@ -69,6 +69,17 @@ function showSection(sectionName) {
   const activeButton = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
   if (activeButton) {
     activeButton.classList.add('active');
+  }
+
+  // Load projects data when projects section is shown
+  if (sectionName === 'projects' && window.projectManager) {
+    window.projectManager.loadProjects();
+  }
+
+  // Load daily tasks data when daily-tasks section is shown
+  if (sectionName === 'daily-tasks' && window.dailyTaskManager) {
+    window.dailyTaskManager.loadDailyTasks();
+    window.dailyTaskManager.loadProgressReports();
   }
 }
 

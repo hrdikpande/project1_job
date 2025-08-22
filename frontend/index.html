@@ -22,6 +22,8 @@
             <h1 class="text-2xl font-bold">Task & Checklist Manager</h1>
             <div class="space-x-4">
                 <button onclick="showSection('dashboard')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700 active">Dashboard</button>
+                <button onclick="showSection('projects')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Projects</button>
+                <button onclick="showSection('daily-tasks')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Daily Tasks</button>
                 <button onclick="showSection('tasks')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Tasks</button>
                 <button onclick="showSection('articles')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Articles</button>
                 <button onclick="showSection('checklists')" class="nav-btn px-4 py-2 rounded hover:bg-blue-700">Checklists</button>
@@ -33,6 +35,20 @@
         <!-- Dashboard Section -->
         <div id="dashboard" class="hidden">
             <h2 class="text-3xl font-bold mb-6">Dashboard</h2>
+            
+            <!-- Digital Clocks -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">🇮🇳 Indian Time (IST)</h3>
+                    <div class="text-4xl font-mono font-bold text-blue-600" id="indian-time">--:--:--</div>
+                    <div class="text-sm text-gray-500 mt-1" id="indian-date">--</div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">🇹🇭 Thailand Time (ICT)</h3>
+                    <div class="text-4xl font-mono font-bold text-green-600" id="thailand-time">--:--:--</div>
+                    <div class="text-sm text-gray-500 mt-1" id="thailand-date">--</div>
+                </div>
+            </div>
             
             <!-- Statistics Cards -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -56,6 +72,86 @@
 
             <!-- Checklist Dashboard -->
             <div id="checklist-dashboard"></div>
+        </div>
+
+        <!-- Projects Section -->
+        <div id="projects" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">Project Management</h2>
+                <button onclick="showCreateProjectModal()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                    Create New Project
+                </button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="bg-white p-4 rounded-lg shadow mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <input type="text" id="global-search" placeholder="Search projects, tasks, articles, checklists..." 
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                    </div>
+                    <button onclick="performGlobalSearch()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                        Search
+                    </button>
+                </div>
+            </div>
+
+            <!-- Projects Container -->
+            <div id="projects-container"></div>
+        </div>
+
+        <!-- Daily Tasks Section -->
+        <div id="daily-tasks" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold">Daily Task Management</h2>
+                <div class="space-x-2">
+                    <button onclick="showCreateDailyTaskModal()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                        Create Daily Task
+                    </button>
+                    <button onclick="showCreateProgressReportModal()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                        Submit Progress Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white p-4 rounded-lg shadow mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label for="filter-assigned-to" class="block text-sm font-medium text-gray-700 mb-2">Assigned To</label>
+                        <input type="text" id="filter-assigned-to" placeholder="Filter by assignee" 
+                               class="w-full p-2 border border-gray-300 rounded-lg" aria-label="Filter by assignee">
+                    </div>
+                    <div>
+                        <label for="filter-status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select id="filter-status" class="w-full p-2 border border-gray-300 rounded-lg" aria-label="Filter by status">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-due-date" class="block text-sm font-medium text-gray-700 mb-2">Due Date</label>
+                        <input type="date" id="filter-due-date" class="w-full p-2 border border-gray-300 rounded-lg" aria-label="Filter by due date">
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="applyDailyTaskFilters()" class="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700">
+                            Apply Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Tasks Container -->
+            <div id="daily-tasks-container"></div>
+
+            <!-- Progress Reports Container -->
+            <div class="mt-8">
+                <h3 class="text-2xl font-bold mb-4">Recent Progress Reports</h3>
+                <div id="progress-reports-container"></div>
+            </div>
         </div>
 
         <!-- Tasks Section -->
@@ -170,7 +266,256 @@
         </div>
     </div>
 
+    <!-- Create Project Modal -->
+    <div id="project-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-semibold mb-4">Create New Project</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
+                    <input type="text" id="project-name" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                           placeholder="Enter project name" aria-label="Project name">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea id="project-description" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="3" placeholder="Enter project description" aria-label="Project description"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                        <input type="date" id="project-start-date" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Project start date">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                        <input type="date" id="project-end-date" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Project end date">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select id="project-status" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Project status">
+                            <option value="planning">Planning</option>
+                            <option value="active">Active</option>
+                            <option value="on-hold">On Hold</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                        <select id="project-priority" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Project priority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Project Manager</label>
+                    <input type="text" id="project-manager" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                           placeholder="Enter project manager name" aria-label="Project manager">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Budget (Optional)</label>
+                    <input type="number" id="project-budget" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                           placeholder="Enter budget amount" aria-label="Project budget">
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="hideCreateProjectModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button onclick="createNewProject()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    Create Project
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Results Modal -->
+    <div id="search-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Search Results</h3>
+                <button onclick="hideSearchModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            
+            <div id="search-results" class="space-y-4">
+                <!-- Search results will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Daily Task Modal -->
+    <div id="daily-task-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-semibold mb-4">Create New Daily Task</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="daily-task-title" class="block text-sm font-medium text-gray-700 mb-2">Task Title *</label>
+                    <input type="text" id="daily-task-title" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                           placeholder="Enter task title" aria-label="Daily task title">
+                </div>
+                
+                <div>
+                    <label for="daily-task-description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea id="daily-task-description" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="3" placeholder="Enter task description" aria-label="Daily task description"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="daily-task-assigned-to" class="block text-sm font-medium text-gray-700 mb-2">Assigned To *</label>
+                        <input type="text" id="daily-task-assigned-to" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                               placeholder="Enter assignee name" aria-label="Daily task assignee">
+                    </div>
+                    <div>
+                        <label for="daily-task-due-date" class="block text-sm font-medium text-gray-700 mb-2">Due Date *</label>
+                        <input type="date" id="daily-task-due-date" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Daily task due date">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="daily-task-priority" class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                        <select id="daily-task-priority" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Daily task priority">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="daily-task-status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select id="daily-task-status" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Daily task status">
+                            <option value="pending" selected>Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="blocked">Blocked</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="daily-task-estimated-hours" class="block text-sm font-medium text-gray-700 mb-2">Estimated Hours</label>
+                    <input type="number" id="daily-task-estimated-hours" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                           placeholder="Enter estimated hours" min="0" step="0.5" aria-label="Daily task estimated hours">
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="hideCreateDailyTaskModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button onclick="createNewDailyTask()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Create Task
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Progress Report Modal -->
+    <div id="progress-report-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-lg max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-semibold mb-4">Submit Daily Progress Report</h3>
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="progress-reporter-name" class="block text-sm font-medium text-gray-700 mb-2">Your Name *</label>
+                        <input type="text" id="progress-reporter-name" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                               placeholder="Enter your name" aria-label="Progress reporter name">
+                    </div>
+                    <div>
+                        <label for="progress-report-date" class="block text-sm font-medium text-gray-700 mb-2">Report Date *</label>
+                        <input type="date" id="progress-report-date" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Progress report date">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="progress-tasks-completed" class="block text-sm font-medium text-gray-700 mb-2">Tasks Completed Today</label>
+                    <textarea id="progress-tasks-completed" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="3" placeholder="List tasks you completed today" aria-label="Tasks completed today"></textarea>
+                </div>
+                
+                <div>
+                    <label for="progress-tasks-in-progress" class="block text-sm font-medium text-gray-700 mb-2">Tasks In Progress</label>
+                    <textarea id="progress-tasks-in-progress" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="3" placeholder="List tasks you're currently working on" aria-label="Tasks in progress"></textarea>
+                </div>
+                
+                <div>
+                    <label for="progress-tasks-blocked" class="block text-sm font-medium text-gray-700 mb-2">Tasks Blocked</label>
+                    <textarea id="progress-tasks-blocked" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="2" placeholder="List any blocked tasks and reasons" aria-label="Tasks blocked"></textarea>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="progress-hours-worked" class="block text-sm font-medium text-gray-700 mb-2">Hours Worked Today</label>
+                        <input type="number" id="progress-hours-worked" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                               placeholder="Enter hours worked" min="0" step="0.5" aria-label="Hours worked today">
+                    </div>
+                    <div>
+                        <label for="progress-mood-rating" class="block text-sm font-medium text-gray-700 mb-2">Mood Rating (1-5)</label>
+                        <select id="progress-mood-rating" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Mood rating">
+                            <option value="1">1 - Very Poor</option>
+                            <option value="2">2 - Poor</option>
+                            <option value="3" selected>3 - Neutral</option>
+                            <option value="4">4 - Good</option>
+                            <option value="5">5 - Excellent</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="progress-productivity-score" class="block text-sm font-medium text-gray-700 mb-2">Productivity Score (1-5)</label>
+                    <select id="progress-productivity-score" class="input-field w-full p-3 border border-gray-300 rounded-lg" aria-label="Productivity score">
+                        <option value="1">1 - Very Low</option>
+                        <option value="2">2 - Low</option>
+                        <option value="3" selected>3 - Average</option>
+                        <option value="4">4 - High</option>
+                        <option value="5">5 - Very High</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="progress-challenges" class="block text-sm font-medium text-gray-700 mb-2">Challenges Faced</label>
+                    <textarea id="progress-challenges" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="2" placeholder="Describe any challenges you faced today" aria-label="Challenges faced"></textarea>
+                </div>
+                
+                <div>
+                    <label for="progress-next-day-plan" class="block text-sm font-medium text-gray-700 mb-2">Tomorrow's Plan</label>
+                    <textarea id="progress-next-day-plan" class="input-field w-full p-3 border border-gray-300 rounded-lg" 
+                              rows="2" placeholder="What do you plan to work on tomorrow?" aria-label="Tomorrow's plan"></textarea>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-3 mt-6">
+                <button onclick="hideCreateProgressReportModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    Cancel
+                </button>
+                <button onclick="createNewProgressReport()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                    Submit Report
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script src="checklist.js"></script>
+    <script src="projects.js"></script>
+    <script src="daily-tasks.js"></script>
 </body>
 </html>

@@ -9,6 +9,9 @@ const database = require('./database');
 const tasksRouter = require('./routes/tasks');
 const articlesRouter = require('./routes/articles');
 const checklistsRouter = require('./routes/checklists');
+const projectsRouter = require('./routes/projects');
+const dailyTasksRouter = require('./routes/daily-tasks');
+const progressReportsRouter = require('./routes/progress-reports');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -47,6 +50,9 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/tasks', tasksRouter);
 app.use('/api/articles', articlesRouter);
 app.use('/api/checklists', checklistsRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/daily-tasks', dailyTasksRouter);
+app.use('/api/progress-reports', progressReportsRouter);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
